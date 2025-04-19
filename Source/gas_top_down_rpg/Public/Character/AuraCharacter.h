@@ -13,5 +13,6 @@ UCLASS()
 class GAS_TOP_DOWN_RPG_API AAuraCharacter : public AAuraCharacterBase
 {
 	GENERATED_BODY()
-	
+public:
+	AAuraCharacter();
 };
