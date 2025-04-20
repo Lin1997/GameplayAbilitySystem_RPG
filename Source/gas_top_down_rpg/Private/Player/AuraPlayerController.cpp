@@ -4,10 +4,41 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	// Early out if no change
+	if (LastActor == ThisActor) return;
+
+	// Unhighlight previous actor if it exists and is different
+	if (LastActor && LastActor != ThisActor)
+	{
+		LastActor->UnHighlightActor();
+	}
+
+	// Highlight new actor if it exists
+	if (ThisActor)
+	{
+		ThisActor->HighlightActor();
+	}
 }
 
 void AAuraPlayerController::BeginPlay()
